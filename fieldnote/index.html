@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>FieldNote</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header> 
+    <div class="wrap">
+        <h1>Welcome to FieldNote App</h1>
+    </div>
+    <nav>
+      <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#packing">Packing List</a></li>
+        <li><a href="#notes">Field Notes</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="wrap">
+    <section id="about" class="card">
+      <h2>About FieldNote</h2>
+      <p>FieldNote is a simple, personal log for outdoor observations: plants, weather, trails, anything you notice.</p>
+    </section>
+
+    <section id="packing" class="card">
+      <h2>Packing List</h2>
+      <ul class="clean">
+        <li>Water</li>
+        <li>Snacks</li>
+        <li>Map</li>
+      </ul>
+    </section>
+
+    <section id="notes" class="card">
+      <h2>Recent Field Notes</h2>
+
+      <article class="note-card">
+        <h3 class="note-title">Time for a hike</h3>
+        <p class="note-body">This is a note about packing gear. Bring water, snacks, a paper map, and sunscreen.</p>
+        <img class="note-image" src="trailhead-photo.jpg" alt="Trailhead Photo">
+        <p class="note-actions">
+          <a class="note-link"  href="https://www.google.com/maps" target="_blank" rel="noopener">See location</a>
+        </p>
+      </article>
+
+      <article class="note-card">
+        <h3 class="note-title">Trailhead Observation</h3>
+        <p class="note-body">Trail map kiosk is updated; noticed a new loop marked "Ridge Spur".</p>
+        <p class="note-body">Aug 26, 2025</p>
+      </article>
+    </section>
+  </main>
+
+  <script src="scripts.js"></script>
+
+  <footer class="wrap">
+     <small>&copy; 2025 FieldNote.</small>
+  </footer>
+</body>
+</html>
