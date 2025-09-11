@@ -7,22 +7,39 @@ function App() {
         title: "Trailhead observation", 
         body: "New signage at the kiosk."
       },
-            {
-        title: "Trailhead observation", 
-        body: "New signage at the kiosk."
-      },
-            {
-        title: "Trailhead observation", 
-        body: "New signage at the kiosk."
-      }
     ]
   )
-const passingProps = (n)=>(<NoteCard {...n} />)
+  const [title, setTitle] = useState("")
+  const [body, setBody] = useState("")
+  const handleClick = (e)=>{
+    e.preventDefault()
+    if (!title.trim() || !body.trim()) return;
+    
+    setNotes([
+      { title, body },
+      ...notes,
+    ]);
+    setTitle("");
+    setBody("");
+
+  }
+
   return (
     <>
-        
-        {notes.map(passingProps)}
-    
+    <div className="container">
+    <header>
+    <h1>FieldNote</h1>
+    <p className="tagline">A simple place to log outdoor observations: plants, weather, trails, anything you notice.
+    </p>
+    </header>
+      <form onSubmit={handleClick}>
+        <input  value={title} onChange={(e)=>setTitle(e.target.value)} placeholder="Note title" />
+        <textarea value={body} onChange={e=>setBody(e.target.value)} placeholder="Note body" />
+        <button type='submit' >Add note</button>
+      </form>
+        {notes.map((n)=>(<div className='note-card'><NoteCard {...n} /></div>
+))}
+    </div>
     </>
   )
 }
