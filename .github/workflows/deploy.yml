@@ -1,0 +1,49 @@
+name: Deploy Vite app to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]          # Deploy on push to main. [Optional]
+  workflow_dispatch:             # Allow manual runs. [Optional]
+
+permissions:
+  contents: read                 # Needed for checkout. [Required]
+  pages: write                   # Needed to publish to Pages. [Required]
+  id-token: write                # Needed for deploy-pages OIDC auth. [Required]
+
+env:
+  APP_DIR: fieldnote-react                     # [Required] Set to "." if project is at repo root,
+                                 # or to "subfolder-name" if inside a subfolder.
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: ${{ env.APP_DIR }}/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: ${{ env.APP_DIR }}
+
+      - name: Build
+        run: npm run build
+        working-directory: ${{ env.APP_DIR }}
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ${{ env.APP_DIR }}/dist   # Always points to dist folder inside APP_DIR
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
