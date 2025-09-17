@@ -1,11 +1,12 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import SearchBar from "./components/SearchBar.jsx";
 import NotesList from "./components/NotesList.jsx";
 import NoteCard from "./components/NoteCard.jsx";
 
 export default function App() {
+  const nextId = useRef(2)
   const [notes, setNotes] = useState([
-    { id: Date.now(), title: "Trailhead observation", body: "New signage at the kiosk." },
+    { id: 1, date: Date.now(), title: "Trailhead observation", body: "New signage at the kiosk." },
   ]);
 
   const [title, setTitle] = useState("");
@@ -24,7 +25,7 @@ export default function App() {
 
     setSaving(true);
     setTimeout(() => {
-      setNotes([{ id: Date.now(), title, body }, ...notes]);
+      setNotes([{ id: nextId.current++, date: Date.now(), title, body }, ...notes]);
       setTitle("");
       setBody("");
       setSaving(false);
@@ -66,12 +67,11 @@ export default function App() {
         </button>
       </form>
 
-      {/* Show ALL notes */}
       {notes.map((n) => (
         <NoteCard key={n.id}>
           <h2>{n.title}</h2>
           <p>{n.body}</p>
-         <p>{new Date(n.id).toLocaleDateString()}</p>
+         <p>{new Date(n.date).toLocaleDateString()}</p>
         </NoteCard>
       ))}
     </div>
