@@ -167,3 +167,16 @@
     form button:hover {
         background: #15803d;
     }
+
+    button:disabled {
+  background-color: #ccc;  
+  cursor: not-allowed;
+}
+
+    .saving-banner {
+      margin: 10px 0;
+      padding: 8px;
+      background: #eef;
+      border: 1px solid #99c;
+      border-radius: 6px;
+    }
