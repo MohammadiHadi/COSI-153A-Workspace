@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { FlatList, ScrollView, StyleSheet, Text, View } from 'react-native';
+import {Image, Pressable,  FlatList, ScrollView, StyleSheet, Text, View } from 'react-native';
 
  const notes = [
 { id: '1', title: 'Trailhead observation', body: 'New signage at the kiosk.' },
@@ -40,6 +40,23 @@ export default function App() {
           contentContainerStyle={{ padding: 16 }}
         />
         </View>
+        <View style={styles.card}>
+            <Pressable
+            onPress={() => alert("Pressed!")}
+            onLongPress={()=>alert("long pressed!")}
+            style={({ pressed }) => [
+            styles.button,
+            { backgroundColor: pressed ? "#ddd" : "#2196F3" }
+            ]}
+            >
+              <Text style={styles.text}>Tap me</Text>
+            </Pressable>
+            </View>
+            <View style={styles.card}>
+              <Image resizeMode='contain' source={require("./assets/icon.png")} style={styles.image} />
+            </View>
+
+
 
     </View>
   );
@@ -75,5 +92,14 @@ const styles = StyleSheet.create({
   scrollView: { 
     height: 100, 
     backgroundColor: "lightgray" 
-  }
+  },
+   button: {
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8
+  },
+  text: { color: "#fff", fontSize: 18, fontWeight: "bold" },
+  image: { width: 100, height: 100, borderRadius: 8, marginBottom: 16 },
+
+
 });
