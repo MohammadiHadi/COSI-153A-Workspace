@@ -1,105 +1,159 @@
-//Pressable
-<View style={styles.card}>
-<Pressable
-onPress={() => console.log("Pressed!")}
-style={({ pressed }) => [
-styles.button,
-{ backgroundColor: pressed ? "#ddd" : "#2196F3" }
-]}
->
-<Text style={styles.text}>Tap me</Text>
-</Pressable>
-</View>
-
- button: {
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 8
-  },
-  text: { color: "#fff", fontSize: 18, fontWeight: "bold" }
-
-
-
-//Iamge
-<View style={styles.card}>
- <Image source={require("./assets/icon.png")} style={styles.image} />
-</View>
-
-image: { width: 100, height: 100, borderRadius: 8, marginBottom: 16 },
-
-
-
-//SafeAreaView
-import { Text, View, StyleSheet} from "react-native";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+//App.tsx:
+import { useState } from 'react';
+import { View, Text, TextInput, Pressable, StyleSheet } from 'react-native';
+import SearchBar from './src/components/SearchBar';
+import NotesList from './src/components/NotesList';
 
 export default function App() {
-return (
-<SafeAreaProvider>
-<SafeAreaView style={{flex: 1, backgroundColor: "#fff"}}>
-<Text>Hello World!</Text>
-</SafeAreaView>
-</SafeAreaProvider>
-);
+  const [notes, setNotes] = useState([
+    { id: Date.now(), title: 'Trailhead observation', body: 'New signage at the kiosk.' },
+  ]);
+  const [title, setTitle] = useState('');
+  const [body, setBody] = useState('');
+  const [query, setQuery] = useState('');
+  const [saving, setSaving] = useState(false);
+
+  const visible = notes.filter((n) => {
+    const q = query.trim().toLowerCase();
+    return !q || (n.title.toLowerCase().includes(q) || n.body.toLowerCase().includes(q));
+  });
+
+  const addNote = () => {
+    if (!title.trim() || !body.trim()) return;
+    setSaving(true);
+    setTimeout(() => {
+      setNotes(prev => [
+        { id: Date.now(), title: title.trim(), body: body.trim() },
+        ...prev,
+      ]);
+      setTitle('');
+      setBody('');
+      setSaving(false);
+    }, 300); 
+  };
+
+  return (
+    <View style={{ flex: 1 }}>
+      <View style={styles.container}>
+        <Text style={styles.h1}>FieldNotes</Text>
+        <Text style={styles.intro}>A simple place to log outdoor observations: plants, weather, trails, anything you notice.</Text>
+
+        <View style={styles.form}>
+          <TextInput
+            style={styles.input}
+            value={title}
+            onChangeText={setTitle}
+            placeholder="Type a title)"
+          />
+          <TextInput
+            style={[styles.input, styles.multiline]}
+            value={body}
+            onChangeText={setBody}
+            placeholder="Observations, GPS, conditions…"
+            multiline
+          />
+          <Pressable style={[styles.button, saving && styles.buttonDisabled]} onPress={addNote} disabled={saving}>
+            <Text style={styles.buttonText}>{saving ? 'Saving…' : 'Add note'}</Text>
+          </Pressable>
+
+          <SearchBar onSearch={setQuery} />
+        </View>
+
+        <NotesList notes={visible} />
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { flex: 1, padding: 16, backgroundColor: '#fff' },
+  h1: { fontSize: 22, fontWeight: '800', marginBottom: 12 },
+  intro: { marginBottom: 12 },
+  form: { gap: 8, marginBottom: 12 },
+  input: { borderWidth: 1, borderColor: '#ccc', borderRadius: 10, padding: 10, fontSize: 16 },
+  multiline: { minHeight: 100, textAlignVertical: 'top' },
+  button: { backgroundColor: '#111', paddingVertical: 12, borderRadius: 10, alignItems: 'center' },
+  buttonDisabled: { opacity: 0.6 },
+  buttonText: { color: '#fff', fontWeight: '800' },
+});
+
+
+
+
+
+//SearchBar.tsx:
+import { TextInput, StyleSheet } from 'react-native';
+
+export default function SearchBar({ onSearch }) {
+  return (
+    <TextInput
+      style={styles.search}
+      placeholder="Search notes…"
+      onChangeText={onSearch}
+      clearButtonMode="while-editing"
+    />
+  );
+}
+
+const styles = StyleSheet.create({
+  search: {
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    marginBottom: 8,
+    fontSize: 16,
+  },
+});
+
+
+
+
+
+//NotesList.tsx:
+import { FlatList,  Text } from 'react-native';
+import NoteCard from './NoteCard';
+
+export default function NotesList({ notes }) {
+  if (!notes.length) {
+    return <Text style={{ opacity: 0.7 }}>No notes match.</Text>;
+  }
+
+  return (
+    <FlatList
+      data={notes}
+      keyExtractor={(n) => n.id}
+      contentContainerStyle={{ gap: 10, paddingBottom: 40 }}
+      renderItem={({ item }) => (
+        <NoteCard title={item.title} body={item.body} date={item.id} />
+      )}
+    />
+  );
 }
 
 
 
-<SafeAreaProvider>
-<SafeAreaView style={styles.safe} edges={["top", "left", "right"]}>
-<Text style={styles.header}>This is a Header</Text>
-
-<View style={styles.content}>
-<Text>This is the main content</Text>
-</View>
-
-<SafeAreaView edges={["bottom"]} style={styles.footer}>
-<Text>This is a Footer</Text>
-</SafeAreaView>
-</SafeAreaView>
-</SafeAreaProvider>
 
 
+//NoteCard.tsx
+import { View, Text, StyleSheet } from 'react-native';
 
-//Responsive layout
-<View style={styles.content}>
-  <View style={styles.row}>
-    <View style={styles.wide}><Text>60%</Text></View>
-    <View style={styles.narrow}><Text>40%</Text></View>
-  </View>
+export default function NoteCard({ title, body, date }) {
+  const d = new Date(date);
+  return (
+    <View style={styles.card}>
+      <Text style={styles.title} numberOfLines={1}>{title}</Text>
+      <Text style={styles.body} numberOfLines={2}>{body}</Text>
+      <Text style={styles.date}>{d.toLocaleDateString()}</Text>
+    </View>
+  );
+}
 
-  <View style={styles.row}>
-    <View style={[styles.box, { flex: 1 }]}><Text>1x</Text></View>
-    <View style={[styles.box, { flex: 2 }]}><Text>2x</Text></View>
-    <View style={[styles.box, { flex: 1 }]}><Text>1x</Text></View>
-  </View>
-</View>
-
-
- row: { flexDirection: "row", marginBottom: 16 },
-
-  wide: {
-    width: "60%",
-    height: 100,
-    backgroundColor: "#e0e0e0",
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 8,
-    borderRadius: 8, },
-  
-  narrow: {
-    width: "40%",
-    height: 100,
-    backgroundColor: "#f0f0f0",
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 8, },
-
-  box: {
-    height: 80,
-    marginHorizontal: 4,
-    borderRadius: 8,
-    backgroundColor: "#d9d9d9",
-    justifyContent: "center",
-    alignItems: "center", },
+const styles = StyleSheet.create({
+  card: { borderWidth: 1, borderColor: '#eee', borderRadius: 12, padding: 12, backgroundColor: '#fff' },
+  title: { fontWeight: '700', fontSize: 16, marginBottom: 2 },
+  body: { opacity: 0.8, fontSize: 14, marginBottom: 6 },
+  date: { fontSize: 12, opacity: 0.6 },
+});
 
