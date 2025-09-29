@@ -1,105 +1,80 @@
-import { StatusBar } from 'expo-status-bar';
-import {Image, Pressable,  FlatList, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useState } from 'react';
+import { View, Text, TextInput, Pressable, StyleSheet } from 'react-native';
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
- const notes = [
-{ id: '1', title: 'Trailhead observation', body: 'New signage at the kiosk.' },
-{ id: '2', title: 'Wildlife', body: 'Saw a red fox near the meadow.' },
-{ id: '3', title: 'Weather', body: 'Sunny with scattered clouds.' },
-];
-
-
+import SearchBar from './src/components/SearchBar';
+import NotesList from './src/components/NotesList';
 
 export default function App() {
-   const renderItem = ({ item }) => (
-    <View style={styles.card}>
-      <Text style={styles.title}>{item.title}</Text>
-      <Text style={styles.body}>{item.body}</Text>
-    </View>
-  );
+  const [notes, setNotes] = useState([
+    { id: Date.now(), title: 'Trailhead observation', body: 'New signage at the kiosk.' },
+  ]);
+  const [title, setTitle] = useState('');
+  const [body, setBody] = useState('');
+  const [query, setQuery] = useState('');
+  const [saving, setSaving] = useState(false);
+
+  const visible = notes.filter((n) => {
+    const q = query.trim().toLowerCase();
+    return !q || (n.title.toLowerCase().includes(q) || n.body.toLowerCase().includes(q));
+  });
+
+  const addNote = () => {
+    if (!title.trim() || !body.trim()) return;
+    setSaving(true);
+    setTimeout(() => {
+      setNotes(prev => [
+        { id: Date.now(), title: title.trim(), body: body.trim() },
+        ...prev,
+      ]);
+      setTitle('');
+      setBody('');
+      setSaving(false);
+    }, 300); 
+  };
 
   return (
-    <View style={styles.container}>
-      {/* <View style={styles.card}>
-        <Text style={styles.title}>Trailhead observation</Text>
-        <Text style={styles.body}>New signage at the kiosk.</Text>
-      </View> */}
-      {/* <View style={styles.card}>
-        <ScrollView style={styles.scrollView} contentContainerStyle={styles.sViewContent}>
-          <Text style={styles.title}>{notes[0].title}</Text>
-          <Text style={styles.body}>{notes[0].body}</Text>
-                    <Text style={styles.title}>{notes[1].title}</Text>
-          <Text style={styles.body}>{notes[1].body}</Text>
-                    <Text style={styles.title}>{notes[2].title}</Text>
-          <Text style={styles.body}>{notes[2].body}</Text>
-        </ScrollView>
-      </View> */}
-       <View style={styles.card}>
-        <FlatList data={notes}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={{ padding: 16 }}
-        />
-        </View>
-        <View style={styles.card}>
-            <Pressable
-            onPress={() => alert("Pressed!")}
-            onLongPress={()=>alert("long pressed!")}
-            style={({ pressed }) => [
-            styles.button,
-            { backgroundColor: pressed ? "#ddd" : "#2196F3" }
-            ]}
-            >
-              <Text style={styles.text}>Tap me</Text>
+    <SafeAreaProvider>
+      <SafeAreaView style={{ flex: 1 }}>
+        <View style={styles.container}>
+          <Text style={styles.h1}>FieldNotes</Text>
+          <Text style={styles.tagline}>A simple place to log outdoor observations: plants, weather, trails, anything you notice.</Text>
+
+          <View style={styles.form}>
+            <TextInput
+              style={styles.input}
+              value={title}
+              onChangeText={setTitle}
+              placeholder="Type a title)"
+            />
+            <TextInput
+              style={[styles.input, styles.multiline]}
+              value={body}
+              onChangeText={setBody}
+              placeholder="Observations, GPS, conditions…"
+              multiline
+            />
+            <Pressable style={[styles.button, saving && styles.buttonDisabled]} onPress={addNote} disabled={saving}>
+              <Text style={styles.buttonText}>{saving ? 'Saving…' : 'Add note'}</Text>
             </Pressable>
-            </View>
-            <View style={styles.card}>
-              <Image resizeMode='contain' source={require("./assets/icon.png")} style={styles.image} />
-            </View>
-
-
-
-    </View>
+          </View>
+          
+          <SearchBar onSearch={setQuery} />
+          <NotesList notes={visible} />
+        </View>
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  body: {
-    fontSize: 16,
-    color: '#555',
-    lineHeight: 40,
-  },
-  card: {
-    backgroundColor: '#fff',
-    padding: '5%',
-    margin: 4,
-    borderRadius: 8,
-    width: '85%',
-  },
-   sViewContent: {
-    padding: 16
-  },
-  scrollView: { 
-    height: 100, 
-    backgroundColor: "lightgray" 
-  },
-   button: {
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 8
-  },
-  text: { color: "#fff", fontSize: 18, fontWeight: "bold" },
-  image: { width: 100, height: 100, borderRadius: 8, marginBottom: 16 },
-
-
+  container: { flex: 1, padding: 16, backgroundColor: '#fff' },
+  h1: { fontSize: 22, fontWeight: '800', marginBottom: 12 },
+  tagline: { marginBottom: 12 },
+  form: { gap: 8, marginBottom: 12 },
+  input: { borderWidth: 1, borderColor: '#ccc', borderRadius: 10, padding: 10, fontSize: 16 },
+  multiline: { minHeight: 100 },
+  button: { backgroundColor: '#111', paddingVertical: 12, borderRadius: 10, alignItems: 'center' },
+  buttonDisabled: { opacity: 0.6 },
+  buttonText: { color: '#fff', fontWeight: '800' },
 });
