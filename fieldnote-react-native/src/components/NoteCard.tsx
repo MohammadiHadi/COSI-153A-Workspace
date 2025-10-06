@@ -1,7 +1,8 @@
 import { View, Text, StyleSheet } from 'react-native';
+import {Note} from './types'
 
-export default function NoteCard({ title, body, date }) {
-  const d = new Date(date);
+export default function NoteCard({ title, body, id }: Note) {
+  const d = new Date(id);
   return (
     <View style={styles.card}>
       <Text style={styles.title} numberOfLines={1}>{title}</Text>

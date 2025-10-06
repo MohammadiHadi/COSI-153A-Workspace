@@ -1,6 +1,10 @@
 import { TextInput, StyleSheet } from 'react-native';
 
-export default function SearchBar({ onSearch }) {
+type Props = {
+  onSearch: (text: string) => void;
+}; 
+
+export default function SearchBar({ onSearch }:Props) {
   return (
     <TextInput
       style={styles.search}

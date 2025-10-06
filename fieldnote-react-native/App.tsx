@@ -1,18 +1,20 @@
 import { useState } from 'react';
-import { View, Text, TextInput, Pressable, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Pressable, StyleSheet, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-
 import SearchBar from './src/components/SearchBar';
 import NotesList from './src/components/NotesList';
+import {Note} from './src/components/types'
 
 export default function App() {
-  const [notes, setNotes] = useState([
+  const [notes, setNotes] = useState<Note[]>([
     { id: Date.now(), title: 'Trailhead observation', body: 'New signage at the kiosk.' },
   ]);
-  const [title, setTitle] = useState('');
-  const [body, setBody] = useState('');
-  const [query, setQuery] = useState('');
-  const [saving, setSaving] = useState(false);
+const [title, setTitle] = useState<string>('');
+const [body, setBody]   = useState<string>('');
+const [query, setQuery] = useState<string>('');
+const [saving, setSaving] = useState<boolean>(false);
+
+
 
   const visible = notes.filter((n) => {
     const q = query.trim().toLowerCase();
@@ -20,6 +22,7 @@ export default function App() {
   });
 
   const addNote = () => {
+    Keyboard.dismiss;
     if (!title.trim() || !body.trim()) return;
     setSaving(true);
     setTimeout(() => {
@@ -36,6 +39,10 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <SafeAreaView style={{ flex: 1 }}>
+        <KeyboardAvoidingView 
+	        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+	        style={{ flex: 1 }}>
+
         <View style={styles.container}>
           <Text style={styles.h1}>FieldNotes</Text>
           <Text style={styles.tagline}>A simple place to log outdoor observations: plants, weather, trails, anything you notice.</Text>
@@ -45,7 +52,10 @@ export default function App() {
               style={styles.input}
               value={title}
               onChangeText={setTitle}
-              placeholder="Type a title)"
+              placeholder="Type a title"
+              submitBehavior='blurAndSubmit'
+              returnKeyType='done'
+
             />
             <TextInput
               style={[styles.input, styles.multiline]}
@@ -53,6 +63,7 @@ export default function App() {
               onChangeText={setBody}
               placeholder="Observations, GPS, conditions…"
               multiline
+              submitBehavior='blurAndSubmit'
             />
             <Pressable style={[styles.button, saving && styles.buttonDisabled]} onPress={addNote} disabled={saving}>
               <Text style={styles.buttonText}>{saving ? 'Saving…' : 'Add note'}</Text>
@@ -62,6 +73,7 @@ export default function App() {
           <SearchBar onSearch={setQuery} />
           <NotesList notes={visible} />
         </View>
+        </KeyboardAvoidingView>
       </SafeAreaView>
     </SafeAreaProvider>
   );
