@@ -13,7 +13,7 @@ export default function NotesList({ notes }: {notes: Note[]}) {
       keyExtractor={(n) => String(n.id)}
       contentContainerStyle={{ gap: 10, paddingBottom: 40 }}
       renderItem={({ item }) => (
-        <NoteCard title={item.title} body={item.body} date={item.id} />
+        <NoteCard title={item.title} body={item.body} id={item.id} />
       )}
     />
   );
