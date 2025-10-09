@@ -3,7 +3,6 @@ import { View, Text, Pressable, StyleSheet } from "react-native";
 
 export default function HomeScreen() {
 return (
-    
     <View style={styles.container}>
         <Text style={styles.header}>Hello, World!</Text>
 
@@ -15,12 +14,25 @@ return (
         </Link>
 
         {/* link with a param: /course?name=CS153A */}
-            <Link href={{ pathname: "/course", params: { name: "CS153A"} }} asChild>
+        <Link href={{ pathname: "/course", params: { name: "Week 6 Session 1" } }} asChild>
             <Pressable style={styles.pressable}>
-            <Text>Go to Course (with name)</Text>
+                <Text>Go to Course (with name)</Text>
             </Pressable>
-            </Link>
+        </Link>
 
+        {/* another way to write the same link */}
+        <Link href="/course?name=Week 6 Session 1" asChild>
+            <Pressable style={styles.pressable}>
+                <Text>Go to Course (with name)</Text>
+            </Pressable>
+        </Link>
+
+        {/* link with a dynamic segment: /users/88 */}
+        <Link href={{ pathname: "/users/[id]", params: { id: "88", name: " Alice" } }} asChild>
+            <Pressable style={styles.pressable}>
+                <Text>View user Profile</Text>
+            </Pressable>
+        </Link>
     </View>
 )}
 
