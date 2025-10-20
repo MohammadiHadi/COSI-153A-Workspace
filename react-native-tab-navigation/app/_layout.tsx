@@ -1,12 +1,15 @@
 // app/_layout.tsx
 import { Stack } from "expo-router";
+import { ThemeProvider } from "../context/ThemeContext";
+
 
 export default function RootLayout() {
   return (
-    <Stack>
-      <Stack.Screen name="(tabs)" options={{ title: "Home", headerShown: true }} />
-      <Stack.Screen name="(settings)" options={{headerShown: false}}/>
-    </Stack>
+    <ThemeProvider>
+      <Stack>
+        <Stack.Screen name="(tabs)" options={{ title: "Home", headerShown: false }} />
+        <Stack.Screen name="(settings)" options={{ title: "Settings", headerShown: true }} />
+      </Stack>
+    </ThemeProvider>
   );
 }
-// app/(tabs)/_layout.tsx
