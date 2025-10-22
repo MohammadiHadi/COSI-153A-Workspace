@@ -1,10 +1,16 @@
 import { createContext, useState, useContext } from "react";
 
+type ThemeContextType = {
+  isDarkMode: boolean;
+  toggleTheme: () => void;
+};
+
+
 // Create the Context
-const ThemeContext = createContext();
+const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 // Create a Provider
-export const ThemeProvider = ({ children }) => {
+export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   // state to keep the current theme
   const [isDarkMode, setIsDarkMode] = useState(false);
   // a helper function to switch themes
