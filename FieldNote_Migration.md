@@ -1,15 +1,17 @@
 # FieldNote React Native Migration to Expo Router
 
-This guide describes how to migrate **fieldnote-react-native** into a **multi-screen Expo Router app**. It follows only the concepts covered in your three class samples.
+This guide describes how to migrate **fieldnote-react-native** into a **multi-screen Expo Router app**. It follows only the concepts covered in our lectures.
 
 ---
 
 ## 1. Create a new Expo Router app (TypeScript)
 ```bash
 npx create-expo-app fieldnote-react-native-navigation --template
+```
+Install required libraries
+```bash
 npx expo install react@19.1.0 react-dom@19.1.0 expo-router react-native-safe-area-context react-native-screens @expo/vector-icons   
 ```
-
 Enable Expo Router in `package.json`:
 
 ```json
