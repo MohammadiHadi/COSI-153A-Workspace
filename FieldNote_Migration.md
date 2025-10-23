@@ -1,6 +1,6 @@
 # FieldNote React Native Migration to Expo Router
 
-This guide describes how to migrate **fieldnote-react-native** into a **multi-screen Expo Router app**. It follows only the concepts covered in your three class samples.
+This guide describes how to migrate **fieldnote-react-native** into a **multi-screen Expo Router app**. It follows only the concepts covered in our lectures.
 
 ---
 
