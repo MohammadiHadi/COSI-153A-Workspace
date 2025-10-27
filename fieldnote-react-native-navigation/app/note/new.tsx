@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, StyleSheet } from "react-native";
+import { View, Text, TextInput, StyleSheet, Pressable } from "react-native";
 import { Link } from "expo-router";
 import { useNotes } from "../../src/context/NotesContext";
 import { useTheme } from "../../src/context/ThemeContext";
+import {router } from "expo-router";
 
 export default function NewNote() {
   const { isDarkMode } = useTheme();
@@ -32,20 +33,20 @@ export default function NewNote() {
       />
 
       <View style={styles.actions}>
-        <Link href="/" style={{ color: textColor }} asChild>
+        <Pressable onPress={() => router.back()}>
           <Text style={[styles.btn, { color: textColor }]}>Cancel</Text>
-        </Link>
+        </Pressable>
 
-        <Link href="/" style={{ color: textColor }} asChild>
+        <Pressable onPress={() => {
+              if (title.trim() || body.trim()) addNote(title.trim(), body.trim()); router.back()
+            }}>
           <Text
             style={[styles.btn, { color: textColor }]}
-            onPress={() => {
-              if (title.trim() || body.trim()) addNote(title.trim(), body.trim());
-            }}
+        
           >
             Save
           </Text>
-        </Link>
+        </Pressable>
       </View>
     </View>
   );

@@ -20,7 +20,7 @@ function ThemedRootLayout() {
       }}
 >
         <Stack.Screen name="(tabs)" options={{ title: "Home", headerShown: false }} />
-        <Stack.Screen name="(settings)" options={{ title: "Settings", headerShown: true }} />
+        <Stack.Screen name="(settings)" options={{ presentation: "modal", title: "Settings", headerShown: true }} />
       </Stack>
   );
 }

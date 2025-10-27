@@ -2,6 +2,7 @@
 import { Link } from "expo-router";
 import { View, Text, Pressable } from "react-native";
 import { useTheme } from "../../context/ThemeContext";
+import {router} from "expo-router";
 
 export default function Settings() {
   const { isDarkMode, toggleTheme } = useTheme();
@@ -18,10 +19,9 @@ export default function Settings() {
       <Text style={{ color: text, fontSize: 20 }}>
         {isDarkMode ? "🌙 Dark Mode" : "☀️ Light Mode"}
       </Text>
-          <Pressable onPress={toggleTheme}>
+          <Pressable onPress={() => { toggleTheme(); router.back(); }}>
         <Text style={{ color: isDarkMode ? "#888" : "#007AFF" }}>Toggle Theme</Text>
       </Pressable>
-
     </View>
     </>
   );
