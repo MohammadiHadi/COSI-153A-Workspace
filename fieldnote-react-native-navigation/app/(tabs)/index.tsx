@@ -1,17 +1,38 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Link } from "expo-router";
 import { useNotes } from "../../src/context/NotesContext";
 import { useTheme } from "../../src/context/ThemeContext";
 import SearchBar from "../../src/components/SearchBar";
 import NotesList from "../../src/components/NotesList";
+import { BASE_URL } from "../../src/config";
+import { NoteItem } from "../../src/components/types";
 
 export default function HomeScreen() {
-  const { notes } = useNotes();
+  // const { notes } = useNotes();
+  const [notes, setNotes] = useState<NoteItem[]>([]);
   const [query, setQuery] = useState("");
+  const [loading, setLoading] = useState(true);
   const { isDarkMode } = useTheme();
   const bgColor = isDarkMode ? "#121212" : "#ffffff";
   const textColor = isDarkMode ? "#ffffff" : "#000000";
+
+  useEffect(() => { 
+  const load = async () => {
+  try {
+    const res = await fetch(`${BASE_URL}/notes`);
+    if (!res.ok) throw new Error(`Failed to fetch: ${res.status}`);
+    const data = (await res.json()) as NoteItem[]; 
+    setNotes(data);
+  } catch (e) {
+    console.error("Load notes error:", e);
+  } finally {
+    setLoading(false);
+  }
+};
+load();
+}, []);
+
 
   const filtered = notes.filter((n) => {
     const q = query.trim().toLowerCase();

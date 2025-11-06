@@ -3,7 +3,7 @@ import notesRoutes from './routes/notes.js';
 import { logger } from './middleware/logInfo.js';
 import mongoose from 'mongoose';
 import 'dotenv/config';
-import cors from
+import cors from 'cors'
 
 // mongoose.connect(process.env.MONGO_URI)
 //   .then(() => console.log('Connected to MongoDB'))
