@@ -13,7 +13,7 @@ export default function NoteCard({ note }: { note: NoteItem }) {
   const borderColor = isDarkMode ? "#333" : "#ddd";
 
   return (
-    <Link href={{ pathname: "/note/[id]", params: { id: note.id } }} asChild>
+    <Link href={{ pathname: "/note/[id]", params: { id: note._id } }} asChild>
       <Pressable style={[styles.card, { backgroundColor, borderColor }]}>
         <Text style={[styles.title, { color: textColor }]}>{note.title}</Text>
         <Text numberOfLines={2} style={[styles.body, { color: subTextColor }]}>

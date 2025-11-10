@@ -28,3 +28,17 @@ export const addNote = async (req, res) => {
     res.status(400).json({ error: err.message });
   }
 };
+
+
+export const getNoteById = async (req, res) => {
+  try {
+    const note = await Note.findById(req.params.id);
+    if (!note) {
+      return res.status(404).json({ error: 'Note not found' });
+    }
+    res.json(note);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+

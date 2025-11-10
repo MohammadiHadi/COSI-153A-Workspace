@@ -14,6 +14,19 @@ export default function NewNote() {
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
 
+   const onSave = async () => {
+    if (!title.trim() && !body.trim()) return;
+
+    await addNote({
+      title,
+      body,
+      createdAt: Date.now(),
+    });
+
+    router.back(); 
+  };
+
+  
   return (
     <View style={[styles.container, { backgroundColor }]}>
       <Text style={[styles.h1, { color: textColor }]}>New Note</Text>
@@ -37,9 +50,7 @@ export default function NewNote() {
           <Text style={[styles.btn, { color: textColor }]}>Cancel</Text>
         </Pressable>
 
-        <Pressable onPress={() => {
-              if (title.trim() || body.trim()) addNote(title.trim(), body.trim()); router.back()
-            }}>
+        <Pressable onPress={onSave}>
           <Text
             style={[styles.btn, { color: textColor }]}
         

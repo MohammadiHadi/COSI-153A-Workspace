@@ -25,7 +25,6 @@ function ThemedNotesRootLayout() {
       headerTintColor: textColor,
     }}>
       <Stack.Screen name="(tabs)" options={{ title: "Home", headerShown: false }} />
-      <Stack.Screen name="note" options={{ title: "Home", headerShown: true }} />
       <Stack.Screen name="note/[id]" options={{ title: "Note" }} />
       <Stack.Screen name="note/new" options={{ presentation: "modal", title: "New Note" }} />
     </Stack>

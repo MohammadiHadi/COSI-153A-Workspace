@@ -7,7 +7,7 @@ export default function NotesList({ data }: { data: NoteItem[] }) {
   return (
     <FlatList
       data={data}
-      keyExtractor={(n) => n.id}
+      keyExtractor={(n) => n._id}
       renderItem={({ item }) => <NoteCard note={item} />}
       contentContainerStyle={{ paddingVertical: 8 }}
     />

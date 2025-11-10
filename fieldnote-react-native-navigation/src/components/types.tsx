@@ -1,1 +1,1 @@
-export type NoteItem = { id: string; title: string; body: string; createdAt: number };
+export type NoteItem = { _id: string; title: string; body: string; createdAt: number };
