@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Pressable } from "react-native";
 import { useLocalSearchParams, Link } from "expo-router";
 import { useNotes } from "../../src/context/NotesContext";
 import { useTheme } from "../../src/context/ThemeContext";
@@ -9,8 +9,8 @@ export default function NoteDetail() {
   const backgroundColor = isDarkMode ? "#121212" : "#ffffff";
   const textColor = isDarkMode ? "#ffffff" : "#000000";
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { getNote, removeNote } = useNotes();
-  const note = id ? getNote(String(id)) : undefined;
+  const { notes, removeNote, updateNote } = useNotes();
+  const note = id ? notes.find(note => note._id === (id)) : undefined;
 
   if (!note) {
     return (
@@ -21,20 +21,27 @@ export default function NoteDetail() {
     );
   }
 
+  const onUpdate = async () => {
+    if (!id) return;
+    await updateNote({title: "Weather forecast today", body: "It's cloudy with a possible rain" }, id);
+    // setIsEditing(false);
+  };
+
+
   return (
     <View style={[styles.container, { backgroundColor: backgroundColor }]}>
       <Text style={[styles.h1, { color: textColor }]}>{note.title}</Text>
       <Text style={[styles.body, { color: textColor }]}>{note.body}</Text>
 
       <View style={styles.row}>
-        <Link href="/" asChild>
-          <Text style={styles.link}>Back</Text>
-        </Link>
+        <Pressable onPress={onUpdate}>
+          <Text style={styles.link}>Edit</Text>
+        </Pressable>
 
         <Link href="/" asChild>
           <Text
             style={styles.link}
-            onPress={() => removeNote(note.id)}
+            onPress={() => removeNote(note._id)}
           >
             Delete
           </Text>

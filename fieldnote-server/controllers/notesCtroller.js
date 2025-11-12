@@ -42,3 +42,28 @@ export const getNoteById = async (req, res) => {
   }
 };
 
+export const deleteNote = async (req, res) => {
+  try {
+    const deleted = await Note.findByIdAndDelete(req.params.id);
+    if (!deleted) {
+      return res.status(404).json({ error: 'Note not found' });
+    }
+    res.json({ message: 'Note deleted successfully' });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
+export const updateNote = async (req, res) => {
+  try {
+    const note = await Note.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    if (!note) {
+      return res.status(404).json({ error: 'Note not found' });
+    }
+    res.json(note);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
+

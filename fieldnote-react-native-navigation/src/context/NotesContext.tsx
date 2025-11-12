@@ -6,6 +6,8 @@ type NotesCtx = {
   notes: NoteItem[];
   getNotes: () => Promise<void>;
   addNote: (note: Omit<NoteItem, "_id">) => Promise<void>;
+  removeNote: (id: string) => Promise<void>;
+  updateNote: (note: Omit<NoteItem, "_id" | "createdAt">, id: string) => Promise<void>;
 };
 
 const NotesContext = createContext<NotesCtx | undefined>(undefined);
@@ -33,11 +35,35 @@ export function NotesProvider({ children }: { children: React.ReactNode }) {
   };
 
 
-  const removeNote = (id: string) => {
-    setNotes((prev) => prev.filter((n) => n._id !== id));
+ const removeNote = async (id: string) => {
+    try {
+      const res = await fetch(`${BASE_URL}/notes/${id}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) throw new Error("Failed to delete note");
+      setNotes((prev) => prev.filter((n) => n._id !== id));
+    } catch (err) {
+      console.error("Delete note error:", err);
+    }
   };
 
-  // const getNote = (id: string) => notes.find((n) => n.id === id);
+ const updateNote = async (note: Omit<NoteItem, "_id" | "createdAt">, id: string) => {
+    if (!note || !id) return;
+    try {
+      const res = await fetch(`${BASE_URL}/notes/${id}`, {
+        method: "PATCH", 
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(note),
+      });
+      if (!res.ok) throw new Error(`Failed to update: ${res.status}`);
+      const updatedNote = (await res.json()) as NoteItem;
+      setNotes((prev) => prev.map((n) => (n._id === id ? updatedNote : n)));
+    } catch (e) {
+      console.error("Update note error:", e);
+    }
+  };
+
+
   const getNotes = async () => {
     try {
       const res = await fetch(`${BASE_URL}/notes`);
@@ -53,7 +79,7 @@ export function NotesProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
 
-  const value = { notes, addNote, removeNote, getNotes };
+  const value = { notes, addNote, removeNote, getNotes, updateNote };
   return <NotesContext.Provider value={value}>{children}</NotesContext.Provider>;
 }
 
