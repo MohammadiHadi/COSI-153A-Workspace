@@ -1,16 +1,9 @@
+import 'dotenv/config';
 import { Note } from '../models/notes.js';
+import { v2 as cloudinary } from 'cloudinary';
 
+cloudinary.config();
 
-// export const getNotes = (req, res) => {
-//   res.json(notes);
-// }
-
-// export const addNote = (req, res) => {
-//   const { title, body } = req.body;
-//   const newNote = { title, body, createdAt: Date.now() };
-//   notes.push(newNote);
-//   res.json(notes);
-// }
 
 export const getNotes = async (req, res) => {
   const notes = await Note.find();
@@ -21,13 +14,33 @@ export const getNotes = async (req, res) => {
 
 export const addNote = async (req, res) => {
   try {
-    const note = new Note(req.body);
+    let photoUrl;
+
+    if (req.file) {
+      const buffer = req.file.buffer;
+      const base64 = buffer.toString('base64');
+      const dataUri = `data:image/jpeg;base64,${base64}`;
+
+      const result = await cloudinary.uploader.upload(dataUri, {
+        folder: 'fieldnote-notes',
+      });
+
+      photoUrl = result.secure_url;
+    }
+
+    const note = new Note({
+      ...req.body,
+      photoUrl,
+    });
+
     await note.save();
     res.status(201).json(note);
   } catch (err) {
+    console.error('Error creating note:', err);
     res.status(400).json({ error: err.message });
   }
 };
+
 
 
 export const getNoteById = async (req, res) => {

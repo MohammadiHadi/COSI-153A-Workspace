@@ -5,7 +5,7 @@ import { BASE_URL } from "../config";
 type NotesCtx = {
   notes: NoteItem[];
   getNotes: () => Promise<void>;
-  addNote: (note: Omit<NoteItem, "_id">) => Promise<void>;
+  addNote: (note: Omit<NoteItem, "_id">, photoUri?: string | null) => Promise<void>;
   removeNote: (id: string) => Promise<void>;
   updateNote: (note: Omit<NoteItem, "_id" | "createdAt">, id: string) => Promise<void>;
 };
@@ -15,18 +15,33 @@ const NotesContext = createContext<NotesCtx | undefined>(undefined);
 export function NotesProvider({ children }: { children: React.ReactNode }) {
   const [notes, setNotes] = useState<NoteItem[]>([]);
 
-  // const addNote = (title: string, body: string) => {
-  //   const id = String(Date.now());
-  //   setNotes((prev) => [{ id, title, body, createdAt: Date.now() }, ...prev]);
-  // };
-   const addNote = async (note: Omit<NoteItem, "_id">) => {
+  const addNote = async (note: Omit<NoteItem, "_id">, photoUri?: string | null) => {
     try {
+      const formData = new FormData();
+
+      formData.append("title", note.title);
+      formData.append("body", note.body ?? "");
+      formData.append("createdAt", String(note.createdAt));
+      formData.append("photoUrl", note.photoUrl ?? "");  
+
+      if (photoUri) {
+        formData.append(
+          "photo",
+          {
+            uri: photoUri,
+            name: "photo.jpg",
+            type: "image/jpeg",
+          } as any
+        );
+      }
+
       const res = await fetch(`${BASE_URL}/notes`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(note),
+        body: formData,
       });
+
       if (!res.ok) throw new Error("Failed to add note");
+
       const created = (await res.json()) as NoteItem;
       setNotes((prev) => [created, ...prev]);
     } catch (err) {

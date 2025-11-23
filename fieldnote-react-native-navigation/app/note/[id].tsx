@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, Pressable, TextInput } from "react-native";
-import { useLocalSearchParams, Link } from "expo-router";
+import { View, Text, StyleSheet, Pressable, TextInput, Image } from "react-native";
+import { useLocalSearchParams, Link, router } from "expo-router";
 import { useNotes } from "../../src/context/NotesContext";
 import { useTheme } from "../../src/context/ThemeContext";
 
@@ -58,13 +58,21 @@ export default function NoteDetail() {
          <>
         <Text style={[styles.h1, { color: textColor }]}>{note.title}</Text>
         <Text style={[styles.body, { color: textColor }]}>{note.body}</Text>
-
+      {!isEditing && note?.photoUrl && (
+        <View style={{ marginTop: 12 }}>
+          <Image
+            source={{ uri: note.photoUrl }}
+            style={{ width: "100%", height: 240, borderRadius: 8 }}
+            resizeMode="cover"
+          />
+        </View>
+      )}
         <View style={styles.row}>
           <Pressable onPress={() => setIsEditing(true)}>
             <Text style={[styles.link, { color: "#1f6feb" }]}>Edit</Text>
           </Pressable>
 
-          <Pressable onPress={() => removeNote(note._id)}>
+          <Pressable onPress={() => {removeNote(note._id); router.back();}}>
             <Text style={[styles.link, { color: "tomato" }]}>Delete</Text>
           </Pressable>
         </View>

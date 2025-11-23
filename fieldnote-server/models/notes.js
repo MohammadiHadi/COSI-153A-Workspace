@@ -5,6 +5,7 @@ const noteSchema = new mongoose.Schema({
   body: String,
   createdAt: { type: Date, default: Date.now },
   author: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  photoUrl: { type: String },
 });
 
 
