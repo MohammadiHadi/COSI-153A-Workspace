@@ -1,19 +1,61 @@
 import {CameraView, CameraType, useCameraPermissions } from 'expo-camera';
 import { useState, useRef, useEffect } from 'react';
-import { Button, StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native';
+import { Button, StyleSheet, Text, TouchableOpacity, View, Image, ScrollView } from 'react-native';
 
+import { Platform } from 'react-native';
+
+const LOCALHOST = Platform.OS === 'android'
+    ? 'http://10.0.2.2:3000' // Android emulator special localhost
+    : 'http://localhost:3000'; // iOS simulator & web
+
+const BASE_URL = process.env.EXPO_PUBLIC_API_URL ?? LOCALHOST;
+type Photo = {
+  id: string;
+  url: string;
+  publicId: string;
+};
 export default function App() {
   const [permission, requestPermission] = useCameraPermissions();
   const [facing, setFacing] = useState<CameraType>('back');
   const [isCameraReady, setIsCameraReady] = useState(false);
   const [photoUri, setPhotoUri] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [photos, setPhotos] = useState<Photo[]>([]);
 
-const cameraRef = useRef<CameraView | null>(null);
+  const cameraRef = useRef<CameraView | null>(null);
 
-  useEffect(() => {
-    requestPermission();
-  }, []);
+
+useEffect(() => {
+  const loadPhotos = async () => {
+    try {
+      const res = await fetch(`${BASE_URL}/photos`);
+      const data = await res.json();
+      if (data.success) {
+        setPhotos(data.photos);
+      } else {
+        console.warn('Failed to load photos:', data.error);
+      }
+    } catch (err) {
+      console.warn('Error loading photos:', err);
+    }
+  };
+
+  loadPhotos();
+}, []);
+
+  if (!permission) {
+    // Permission request is still loading
+    return <View />;
+  }
+
+  if (!permission.granted) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.message}>Camera permission is required to use this app.</Text>
+        <Button title="Request Camera Permission" onPress={requestPermission} />
+      </View>
+    );
+  }
 
   function toggleCamera() {
     setFacing((current) => (current === 'back' ? 'front' : 'back'));
@@ -38,7 +80,7 @@ const cameraRef = useRef<CameraView | null>(null);
       const formData = new FormData();
       formData.append('file', {uri: photoUri,name: 'photo.jpg',type: 'image/jpeg',} as any);
 
-      const response = await fetch('http://localhost:3000/upload', {method: 'POST',body: formData,});
+      const response = await fetch(`${BASE_URL}/upload`, {method: 'POST',body: formData,});
 
       if (!response.ok) {
         throw new Error(`Upload failed with status ${response.status}`);
@@ -93,6 +135,18 @@ const cameraRef = useRef<CameraView | null>(null);
         <View style={styles.shutterInner} />
       </TouchableOpacity>
     </View>
+    <View style={styles.galleryContainer}>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        {photos.map(photo => (
+          <Image
+            key={photo.id}
+            source={{ uri: photo.url }}
+            style={styles.galleryImage}
+          />
+        ))}
+      </ScrollView>
+    </View>
+
     </View>
   );
 }
@@ -135,6 +189,9 @@ previewButtonText: {fontSize: 16,fontWeight: '600',},
 previewButtonDisabled: {
   opacity: 0.6,
 },
+galleryContainer: {position: 'absolute',bottom: 0,width: '100%',paddingVertical: 8,     	paddingHorizontal: 8,backgroundColor: 'rgba(0,0,0,0.4)',},
+
+galleryImage: {width: 64,height: 64,borderRadius: 8,marginRight: 8,backgroundColor: '#ccc',},
 
 });
 
