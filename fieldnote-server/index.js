@@ -8,6 +8,7 @@ import cors from 'cors'
 connectDB();
 
 const app = express();
+const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({origin: '*'}));
@@ -15,4 +16,4 @@ app.use(logger);
 app.use('/notes', notesRoutes);
 app.use('/users', usersRoutes);
 
-app.listen(3000, () => console.log('Server running on port 3000'));
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
