@@ -21,7 +21,8 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.mohammadihadi.fieldnotereactnativenavigation"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -29,6 +30,12 @@
     "plugins": [
       "expo-router"
     ],
-    "scheme": "myapp"
+    "scheme": "myapp",
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "047f5a4f-42cf-4f4a-940a-5cc94053789f"
+      }
+    }
   }
 }
